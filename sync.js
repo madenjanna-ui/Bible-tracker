@@ -1,24 +1,44 @@
 /* ==========================
    sync.js
 ========================== */
+const cloudStatus =
+    document.getElementById("cloudStatus");
 
+function setCloudStatus(text){
+
+    if(cloudStatus){
+
+        cloudStatus.textContent = text;
+
+    }
+
+}
 const CLOUD_URL = CONFIG.SCRIPT_URL;
 
-// Скачать данные
+// Скачать данные из Google Drive
 async function downloadCloud() {
+
+    setCloudStatus("🟡 Загрузка...");
 
     try {
 
         const response = await fetch(CLOUD_URL);
 
-        if (!response.ok)
+        if (!response.ok) {
             throw new Error("Ошибка загрузки");
+        }
 
-        return await response.json();
+        const data = await response.json();
 
-    } catch (e) {
+        setCloudStatus("🟢 Сохранено");
 
-        console.error(e);
+        return data;
+
+    } catch (error) {
+
+        console.error("Ошибка загрузки:", error);
+
+        setCloudStatus("🔴 Нет соединения");
 
         return null;
 
