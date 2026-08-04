@@ -282,3 +282,34 @@ padding:16px;
     transition:.25s;
 
 }
+#saveButton{
+
+    margin-top:12px;
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2d4f87;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+#saveButton:active{
+
+    transform:scale(.98);
+
+}
