@@ -1,16 +1,40 @@
 /* ==========================
    Bible Tracker
-   app.js
 ========================== */
 
 const list = document.getElementById("readingList");
 const progressFill = document.getElementById("progressFill");
 const progressText = document.getElementById("progressText");
 
-let completed =
-JSON.parse(localStorage.getItem("completedDays")) || {};
+let completed = {};
+let saveTimer = null;
 
-render();
+init();
+
+async function init() {
+
+    // локальная копия
+    completed = JSON.parse(
+        localStorage.getItem("completedDays")
+    ) || {};
+
+    // пробуем получить облако
+    const cloud = await downloadCloud();
+
+    if (cloud && cloud.completed) {
+
+        completed = cloud.completed;
+
+        localStorage.setItem(
+            "completedDays",
+            JSON.stringify(completed)
+        );
+
+    }
+
+    render();
+
+}
 
 function render() {
 
@@ -25,23 +49,22 @@ function render() {
             card.classList.add("done");
         }
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.className = "check";
-        checkbox.checked = !!completed[item.day];
+        const check = document.createElement("input");
+        check.type = "checkbox";
+        check.className = "check";
+        check.checked = !!completed[item.day];
 
-        checkbox.addEventListener("change", () => {
+        check.addEventListener("change", () => {
 
-            completed[item.day] = checkbox.checked;
+            completed[item.day] = check.checked;
 
-            if (checkbox.checked) {
+            if (check.checked)
                 card.classList.add("done");
-            } else {
+            else
                 card.classList.remove("done");
-            }
 
-            save();
             updateProgress();
+            save();
 
         });
 
@@ -56,13 +79,11 @@ function render() {
         reading.className = "reading";
         reading.textContent = item.reading;
 
-        info.appendChild(title);
-        info.appendChild(reading);
+        info.append(title, reading);
 
-        card.appendChild(checkbox);
-        card.appendChild(info);
+        card.append(check, info);
 
-        list.appendChild(card);
+        list.append(card);
 
     });
 
@@ -72,25 +93,41 @@ function render() {
 
 function updateProgress() {
 
+    const done =
+        Object.values(completed)
+        .filter(Boolean).length;
+
     const total = readingPlan.length;
 
-    const done = Object.values(completed)
-        .filter(v => v).length;
+    const percent =
+        Math.round(done / total * 100);
 
-    const percent = Math.round(done / total * 100);
-
-    progressFill.style.width = percent + "%";
+    progressFill.style.width =
+        percent + "%";
 
     progressText.textContent =
-        done + " из " + total + " дней";
+        `${done} из ${total} дней`;
 
 }
 
 function save() {
 
+    // локально
     localStorage.setItem(
         "completedDays",
         JSON.stringify(completed)
     );
+
+    // задержка, чтобы не отправлять
+    // запрос после каждой галочки
+    clearTimeout(saveTimer);
+
+    saveTimer = setTimeout(async () => {
+
+        await uploadCloud({
+            completed
+        });
+
+    }, 800);
 
 }
