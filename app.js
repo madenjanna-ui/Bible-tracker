@@ -131,3 +131,17 @@ function save() {
     }, 800);
 
 }
+const saveButton =
+    document.getElementById("saveButton");
+
+saveButton.addEventListener("click", async () => {
+
+    setCloudStatus("🟡 Сохранение...");
+
+    await uploadCloud({
+        completed
+    });
+
+    setCloudStatus("🟢 Сохранено");
+
+});
