@@ -49,27 +49,29 @@ async function downloadCloud() {
 // Отправить данные
 async function uploadCloud(data) {
 
+    setCloudStatus("🟡 Сохранение...");
+
     try {
 
         const response = await fetch(CLOUD_URL, {
 
             method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
-
             body: JSON.stringify(data)
 
         });
 
-        return await response.json();
+        const text = await response.text();
+
+        console.log(text);
+
+        setCloudStatus("🟢 Сохранено");
 
     } catch (e) {
 
         console.error(e);
 
-        return null;
+        setCloudStatus("🔴 Ошибка");
 
     }
 
