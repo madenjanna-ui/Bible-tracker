@@ -1,22 +1,11 @@
 {
   "name": "Христианские греческие Писания",
   "short_name": "Писания",
-  "description": "План чтения Христианских греческих Писаний",
+  "description": "План чтения Христианских греческих Писаний на 60 дней",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2d4f87",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "background_color": "#f3effc",
+  "theme_color": "#39206f",
+  "orientation": "portrait"
 }

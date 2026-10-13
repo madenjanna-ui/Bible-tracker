@@ -2,79 +2,69 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Христианские греческие Писания</title>
-
-    <meta name="theme-color" content="#2b4d7f">
+    <meta name="theme-color" content="#39206f">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Писания">
-
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
-
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
 
-<header class="header">
-
-    <h1>
-        📖 Христианские греческие Писания
-    </h1>
-
-    <div class="progress">
-
-        <div class="progress-bar">
-
-            <div id="progressFill"></div>
-
+    <header class="header">
+        <div class="brand-row">
+            <div class="book-mark" aria-hidden="true">📖</div>
+            <div class="brand-copy">
+                <p class="eyebrow">ПЛАН ЧТЕНИЯ · 60 ДНЕЙ</p>
+                <h1>Христианские<br class="title-break"> греческие Писания</h1>
+            </div>
         </div>
 
-        <div id="progressText">
+        <section class="progress-panel" aria-label="Прогресс чтения">
+            <div class="progress-top">
+                <div>
+                    <p class="section-label">Мой прогресс</p>
+                    <p id="progressText" class="progress-count">0 из 60 дней</p>
+                </div>
+                <div class="progress-emblem" aria-hidden="true">✦</div>
+            </div>
+            <div class="progress-bar" role="progressbar" aria-label="Прогресс чтения" aria-valuemin="0" aria-valuemax="60" aria-valuenow="0">
+                <div id="progressFill"></div>
+            </div>
+        </section>
 
-            0 из 60 дней
-
+        <div class="status-row">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="cloudStatus" role="status" aria-live="polite">☁️ Подготовка…</span>
+            <button id="saveButton" type="button">Сохранить</button>
         </div>
+    </header>
 
-    </div>
-<div id="cloudStatus">
-    ☁️ Сохранено
-</div>
-<div id="cloudStatus">
-    ☁️ Сохранено
-</div>
+    <main>
+        <div class="list-heading">
+            <h2>План чтения</h2>
+            <span class="list-caption">Отмечай прочитанное</span>
+        </div>
+        <section id="readingList" aria-label="Дни чтения"></section>
+        <footer class="footer-note">Шаг за шагом, день за днём</footer>
+    </main>
 
-<button id="saveButton">
-    💾 Сохранить
-</button>
-</header>
-
-<main>
-
-    <section id="readingList">
-
-        <!-- app.js автоматически создаст здесь 60 дней -->
-
-    </section>
-
-</main>
-
-<script src="config.js"></script>
-<script src="data.js"></script>
-<script src="sync.js"></script>
-<script src="app.js"></script>
-<script>
-
-if("serviceWorker" in navigator){
-
-navigator.serviceWorker.register("sw.js");
-
-}
-
-</script>
+    <script src="config.js"></script>
+    <script src="data.js"></script>
+    <script src="sync.js"></script>
+    <script src="app.js"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("./sw.js").catch(error => {
+                    console.warn("Service worker registration failed:", error);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
