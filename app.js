@@ -4,6 +4,11 @@ const progressFill = document.getElementById("progressFill");
 const progressText = document.getElementById("progressText");
 const progressBar = document.querySelector(".progress-bar");
 const saveButton = document.getElementById("saveButton");
+const todayDate = document.getElementById("todayDate");
+const todayDay = document.getElementById("todayDay");
+const todayReading = document.getElementById("todayReading");
+const todayState = document.getElementById("todayState");
+const todayDoneButton = document.getElementById("todayDoneButton");
 
 let completed = {};
 let saveTimer = null;
@@ -66,7 +71,7 @@ function render() {
 
         const title = document.createElement("div");
         title.className = "title";
-        title.textContent = `День ${item.day}`;
+        title.textContent = item.date ? `День ${item.day} · ${item.date}` : `День ${item.day}`;
 
         const reading = document.createElement("div");
         reading.className = "reading";
@@ -78,6 +83,79 @@ function render() {
     });
 
     updateProgress();
+    updateTodayPanel();
+}
+
+function getLocalDateKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+}
+
+function parsePlanDate(item) {
+    const match = (item.date || "").match(/^(\d{1,2})\s+([а-яё]+)/i);
+    if (!match) return null;
+    const months = {"января":0,"февраля":1,"марта":2,"апреля":3,"мая":4,"июня":5,"июля":6,"августа":7,"сентября":8,"октября":9,"ноября":10,"декабря":11};
+    const month = months[match[2].toLowerCase()];
+    if (month === undefined) return null;
+    let year = new Date().getFullYear();
+    const now = new Date();
+    // This plan crosses October and November; infer the year nearest the current date.
+    let date = new Date(year, month, Number(match[1]));
+    if (date.getTime() < new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() - 180*86400000) date = new Date(year + 1, month, Number(match[1]));
+    return date;
+}
+
+function getTodayItem() {
+    const now = new Date();
+    const todayKey = getLocalDateKey(now);
+    return readingPlan.find(item => {
+        const date = parsePlanDate(item);
+        return date && getLocalDateKey(date) === todayKey;
+    }) || null;
+}
+
+function updateTodayPanel() {
+    if (!todayDate || !todayReading) return;
+    const now = new Date();
+    todayDate.textContent = now.toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
+    const item = getTodayItem();
+    document.querySelectorAll(".day.is-today").forEach(card => card.classList.remove("is-today"));
+    if (!item) {
+        const first = readingPlan[0];
+        const firstDate = first ? parsePlanDate(first) : null;
+        if (firstDate && now < firstDate) {
+            todayDay.textContent = "Подготовка к началу плана";
+            todayReading.textContent = `Завтра: ${first.reading}`;
+            todayState.textContent = `Старт ${first.date}`;
+        } else {
+            todayDay.textContent = "План чтения завершён";
+            todayReading.textContent = "Все отрывки по плану прочитаны";
+            todayState.textContent = "Отличная работа!";
+        }
+        todayDoneButton.disabled = true;
+        todayDoneButton.textContent = "Нет задания";
+        todayDoneButton.classList.remove("is-done");
+        return;
+    }
+    todayDay.textContent = `День ${item.day} · ${item.date}`;
+    todayReading.textContent = item.reading;
+    todayState.textContent = completed[item.day] ? "Сегодня прочитано ✓" : "Отметь после чтения";
+    todayDoneButton.disabled = false;
+    todayDoneButton.textContent = completed[item.day] ? "Прочитано ✓" : "Отметить прочитанным";
+    todayDoneButton.classList.toggle("is-done", !!completed[item.day]);
+    const cards = [...document.querySelectorAll(".day")];
+    const card = cards.find(el => el.querySelector(".title")?.textContent.includes(`День ${item.day} ·`));
+    if (card) card.classList.add("is-today");
+}
+
+if (todayDoneButton) {
+    todayDoneButton.addEventListener("click", () => {
+        const item = getTodayItem();
+        if (!item) return;
+        completed[item.day] = !completed[item.day];
+        persistLocal();
+        render();
+        scheduleCloudSave();
+    });
 }
 
 function updateProgress() {

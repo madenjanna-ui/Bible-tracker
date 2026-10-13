@@ -15,11 +15,13 @@
     <div class="ambient ambient-one" aria-hidden="true"></div>
     <div class="ambient ambient-two" aria-hidden="true"></div>
 
+    <div class="screen-top">
+    <div class="schedule-scroll">
     <header class="header">
         <div class="brand-row">
             <div class="book-mark" aria-hidden="true">📖</div>
             <div class="brand-copy">
-                <p class="eyebrow">ПЛАН ЧТЕНИЯ · 44 ДНЯ</p>
+                <p class="eyebrow">ПЛАН ЧТЕНИЯ · 27 ДНЕЙ</p>
                 <h1>Христианские<br class="title-break"> греческие Писания</h1>
             </div>
         </div>
@@ -52,6 +54,18 @@
         <section id="readingList" aria-label="Дни чтения"></section>
         <footer class="footer-note">Шаг за шагом, день за днём</footer>
     </main>
+    </div><!-- /.schedule-scroll -->
+    </div><!-- /.screen-top -->
+
+    <section class="today-panel" aria-labelledby="todayHeading">
+        <div class="today-glass">
+            <div class="today-kicker"><span class="today-dot"></span><span id="todayDate">Сегодня</span></div>
+            <h2 id="todayHeading">Чтение на сегодня</h2>
+            <p id="todayDay" class="today-day"></p>
+            <p id="todayReading" class="today-reading">Загружаем отрывок…</p>
+            <div class="today-bottom"><span id="todayState">План чтения</span><button id="todayDoneButton" type="button">Отметить прочитанным</button></div>
+        </div>
+    </section>
 
     <script src="config.js"></script>
     <script src="data.js"></script>
